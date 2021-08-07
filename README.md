@@ -1,1 +1,1 @@
-# Algorithm 공부 (프로그래머스)
+# Algorithm (프로그래머스)
