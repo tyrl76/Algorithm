@@ -16,6 +16,7 @@
 
 from IPython.display import Image
 
+
 # # [카카오 인턴] 키패드 누르기 (1)
 #
 # ## 문제 설명
@@ -60,7 +61,7 @@ from IPython.display import Image
 #
 # 왼손 위치	오른손 위치	눌러야 할 숫자	사용한 손	설명
 #
-# *	#	1	L	1은 왼손으로 누릅니다.
+# x	#	1	L	1은 왼손으로 누릅니다.
 #
 # 1	#	3	R	3은 오른손으로 누릅니다.
 #
@@ -94,4 +95,137 @@ from IPython.display import Image
 #
 # 오른손잡이가 [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]를 순서대로 누르면 사용한 손은 "LLRLLRLLRL"이 됩니다.
 
+# ## My code
+
+# +
+def find(num):
+    screen = [[1, 2, 3], [4, 5, 6], [7, 8, 9], ["*", 0, "#"]]
+    for i, j in enumerate(screen):
+            for p, q in enumerate(j):
+                if num == q:
+                    x = i
+                    y = p
+                    return (x, y)
+
+
+def solution(numbers, hand):
+    left_hand = (3, 0)
+    right_hand = (3, 2)
+    result = ''
+
+    if hand == "right":
+        for i in numbers:
+            target = find(i)
+            left_diff = abs(left_hand[0] - target[0]) + abs(left_hand[1] - target[1])
+            right_diff = abs(right_hand[0] - target[0]) + abs(right_hand[1] - target[1])
+            if target[1] == 0:
+                left_hand = target
+                result += "L"
+            elif target[1] == 1:
+                if left_diff < right_diff:
+                    left_hand = target
+                    result += "L"
+                else:
+                    right_hand = target
+                    result += "R"
+            else:
+                right_hand = target
+                result += "R"
+
+    if hand == "left":
+        for i in numbers:
+            target = find(i)
+            left_diff = abs(left_hand[0] - target[0]) + abs(left_hand[1] - target[1])
+            right_diff = abs(right_hand[0] - target[0]) + abs(right_hand[1] - target[1])
+            if target[1] == 0:
+                left_hand = target
+                result += "L"
+            elif target[1] == 1:
+                if left_diff > right_diff:
+                    right_hand = target
+                    result += "R"
+                else:
+                    left_hand = target
+                    result += "L"
+            else:
+                right_hand = target
+                result += "R"
+
+    return result
+
+
+# -
+
+# ## answers
+
+def solution(numbers, hand):
+    answer = ''
+    key_dict = {1:(0,0),2:(0,1),3:(0,2),
+                4:(1,0),5:(1,1),6:(1,2),
+                7:(2,0),8:(2,1),9:(2,2),
+                '*':(3,0),0:(3,1),'#':(3,2)}
+
+    left = [1,4,7]
+    right = [3,6,9]
+    lhand = '*'
+    rhand = '#'
+    for i in numbers:
+        if i in left:
+            answer += 'L'
+            lhand = i
+        elif i in right:
+            answer += 'R'
+            rhand = i
+        else:
+            curPos = key_dict[i]
+            lPos = key_dict[lhand]
+            rPos = key_dict[rhand]
+            ldist = abs(curPos[0]-lPos[0]) + abs(curPos[1]-lPos[1])
+            rdist = abs(curPos[0]-rPos[0]) + abs(curPos[1]-rPos[1])
+
+            if ldist < rdist:
+                answer += 'L'
+                lhand = i
+            elif ldist > rdist:
+                answer += 'R'
+                rhand = i
+            else:
+                if hand == 'left':
+                    answer += 'L'
+                    lhand = i
+                else:
+                    answer += 'R'
+                    rhand = i
+
+    return answer
+
+
+def solution(numbers, hand):
+    answer = ''
+    location = [[3, 1], [0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2]]
+    left, right = [3, 0], [3, 2]
+    for i in numbers:
+        if i % 3 == 1:
+            answer += 'L'
+            left = location[i]
+        elif i % 3 == 0 and i != 0:
+            answer += 'R'
+            right = location[i]
+        else:
+            l = abs(location[i][0] - left[0]) + abs(location[i][1] - left[1])
+            r = abs(location[i][0] - right[0]) + abs(location[i][1] - right[1])
+            if l < r:
+                answer += 'L'
+                left = location[i]
+            elif l > r:
+                answer += 'R'
+                right = location[i]
+            else:
+                answer += hand[0].upper()
+                if hand == 'right':
+                    right = location[i]
+                else:
+                    left = location[i]                
+
+    return answer
 
